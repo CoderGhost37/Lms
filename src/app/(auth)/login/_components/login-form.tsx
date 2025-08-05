@@ -1,7 +1,8 @@
 'use client'
 
 import { GithubIcon } from 'lucide-react'
-import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +11,10 @@ import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
 
 export function LoginForm() {
+  const router = useRouter()
   const [githubPending, startGithubTransition] = useTransition()
+  const [emailPending, startEmailTransition] = useTransition()
+  const [email, setEmail] = useState('')
 
   async function signInWithGithub() {
     startGithubTransition(async () => {
@@ -23,6 +27,25 @@ export function LoginForm() {
           },
           onError: (_error) => {
             toast.error('Something went wrong!')
+          },
+        },
+      })
+    })
+  }
+
+  function signInWithEmail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    startEmailTransition(async () => {
+      await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: 'sign-in',
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success('Verification email sent, please check your inbox!')
+            router.push(`/verify-request?email=${email}`)
+          },
+          onError: (_error) => {
+            toast.error('Error sending verification email, please try again.')
           },
         },
       })
@@ -53,14 +76,21 @@ export function LoginForm() {
           </span>
         </div>
 
-        <div className="grid gap-3">
+        <form onSubmit={signInWithEmail} className="grid gap-3">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input type="email" placeholder="m@example.com" />
+            <Input
+              type="email"
+              placeholder="m@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
-          <Button>Continue with Email</Button>
-        </div>
+          <Button type="submit" loading={emailPending}>
+            Continue with Email
+          </Button>
+        </form>
       </CardContent>
     </Card>
   )
