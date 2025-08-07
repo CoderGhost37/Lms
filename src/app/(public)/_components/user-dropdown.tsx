@@ -1,7 +1,5 @@
 import { BookOpenIcon, ChevronDownIcon, HomeIcon, LayoutDashboard, LogOutIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { authClient } from '@/lib/auth-client'
+import { useSignOut } from '@/hooks/use-signout'
 
 interface UserDropdownProps {
   name: string
@@ -22,21 +20,7 @@ interface UserDropdownProps {
 }
 
 export function UserDropdown({ name, email, image }: UserDropdownProps) {
-  const router = useRouter()
-
-  async function signOut() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/')
-          toast.success('Signed out successfully')
-        },
-        onError: (_error) => {
-          toast.error('Failed to signout')
-        },
-      },
-    })
-  }
+  const handleSignout = useSignOut()
 
   return (
     <DropdownMenu>
@@ -76,7 +60,7 @@ export function UserDropdown({ name, email, image }: UserDropdownProps) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={signOut}>
+        <DropdownMenuItem onClick={handleSignout}>
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
           <span>Logout</span>
         </DropdownMenuItem>
