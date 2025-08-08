@@ -5,7 +5,7 @@ import { PlusIcon, Sparkles } from 'lucide-react'
 import type { Resolver } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import slugify from 'slugify'
-
+import { RichTextEditor } from '@/components/rich-text-editor/editor'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -114,7 +114,7 @@ export function CourseCreationForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Description" className="min-h-[120px]" {...field} />
+                <RichTextEditor field={field} />
               </FormControl>
               <FormMessage />
             </FormItem>
