@@ -86,6 +86,7 @@ export function Uploader({ value, onChange }: UploaderProps) {
       }
 
       const { presignedUrl, key } = await preSignedResponse.json()
+      console.log('Presigned URL:', presignedUrl)
 
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
@@ -101,6 +102,7 @@ export function Uploader({ value, onChange }: UploaderProps) {
         }
 
         xhr.onload = () => {
+          console.log('Upload complete:', xhr.status, xhr.responseText)
           if (xhr.status === 200 || xhr.status === 204) {
             resolve()
             setFileState((prev) => ({
