@@ -2,9 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Sparkles } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useTransition } from 'react'
 import type { Resolver } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import slugify from 'slugify'
+import { toast } from 'sonner'
 import { Uploader } from '@/components/file-uploader/uploader'
 import { RichTextEditor } from '@/components/rich-text-editor/editor'
 import { Button } from '@/components/ui/button'
@@ -25,10 +28,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { tryCatch } from '@/hooks/try-catch'
 import type { CourseSchemaType } from '@/lib/zodSchemas'
 import { courseCategories, courseLevels, courseSchema, courseStatus } from '@/lib/zodSchemas'
+import { createCourse } from '../actions'
 
 export function CourseCreationForm() {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const form = useForm<CourseSchemaType>({
     resolver: zodResolver(courseSchema) as Resolver<CourseSchemaType>,
     defaultValues: {
@@ -46,7 +53,22 @@ export function CourseCreationForm() {
   })
 
   function onSubmit(values: CourseSchemaType) {
-    console.log(values)
+    startTransition(async () => {
+      const { data: result, error } = await tryCatch(createCourse(values))
+      if (error) {
+        toast.error('An unexpected error occurred while creating the course.')
+        return
+      }
+
+      if (result.status === 'error') {
+        toast.error(result.message)
+        return
+      }
+
+      toast.success(result.message)
+      form.reset()
+      router.push('/admin/courses')
+    })
   }
 
   return (
@@ -239,7 +261,7 @@ export function CourseCreationForm() {
           )}
         />
 
-        <Button type="submit">
+        <Button type="submit" loading={isPending}>
           <PlusIcon className="mr-2 size-4" />
           Create Course
         </Button>
