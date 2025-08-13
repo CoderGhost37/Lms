@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -94,10 +93,45 @@ model Course {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
+  chapters Chapter[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("course")
+}
+
+model Chapter {
+  id       String @id @default(uuid())
+  title    String
+  position Int
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("chapter")
+}
+
+model Lesson {
+  id           String  @id @default(uuid())
+  title        String
+  description  String?
+  thumbnailKey String?
+  videoKey     String?
+  position     Int
+
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("lesson")
 }
 
 enum CourseLevel {

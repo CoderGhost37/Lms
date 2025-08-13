@@ -1,6 +1,7 @@
 import { adminGetCourse } from '@/app/data/admin/admin-get-course'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CourseStructure } from './_components/course-structure'
 import { EditCourseForm } from './_components/edit-course-form'
 
 type Params = Promise<{ courseId: string }>
@@ -30,7 +31,17 @@ export default async function EditCoursePage({ params }: { params: Params }) {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="course-structure">Change your password here.</TabsContent>
+        <TabsContent value="course-structure">
+          <Card>
+            <CardHeader>
+              <CardTitle>Course Structure</CardTitle>
+              <CardDescription>Edit the structure of your course</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CourseStructure data={data} />
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   )
