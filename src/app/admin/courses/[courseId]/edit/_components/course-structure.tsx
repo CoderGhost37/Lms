@@ -18,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ChevronDown, ChevronRight, FileText, GripVertical, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronRight, FileText, GripVertical } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -28,6 +28,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import { reorderChapters, reorderLessons } from '../actions'
+import { DeleteChapterModal } from './delete-chapter-modal'
+import { DeleteLessonModal } from './delete-lesson-modal'
 import { NewChapterModal } from './new-chapter-modal'
 import { NewLessonModal } from './new-lesson-modal'
 
@@ -285,9 +287,7 @@ export function CourseStructure({ data }: CourseStructureProps) {
                           <p className="cursor-pointer hover:text-primary pl-2">{item.title}</p>
                         </div>
 
-                        <Button variant="destructive" size="icon">
-                          <Trash2 className="size-4" />
-                        </Button>
+                        <DeleteChapterModal courseId={data.id} chapterId={item.id} />
                       </div>
 
                       <CollapsibleContent>
@@ -322,9 +322,11 @@ export function CourseStructure({ data }: CourseStructureProps) {
                                       </Link>
                                     </div>
 
-                                    <Button variant="destructive" size="icon">
-                                      <Trash2 className="size-4" />
-                                    </Button>
+                                    <DeleteLessonModal
+                                      courseId={data.id}
+                                      chapterId={item.id}
+                                      lessonId={lesson.id}
+                                    />
                                   </div>
                                 )}
                               </SortableItem>
