@@ -29,6 +29,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { cn } from '@/lib/utils'
 import { reorderChapters, reorderLessons } from '../actions'
 import { NewChapterModal } from './new-chapter-modal'
+import { NewLessonModal } from './new-lesson-modal'
 
 interface CourseStructureProps {
   data: AdminCourseSingularType
@@ -330,9 +331,7 @@ export function CourseStructure({ data }: CourseStructureProps) {
                             ))}
                           </SortableContext>
                           <div className="">
-                            <Button variant="outline" className="w-full">
-                              Create New Lesson
-                            </Button>
+                            <NewLessonModal courseId={data.id} chapterId={item.id} />
                           </div>
                         </div>
                       </CollapsibleContent>

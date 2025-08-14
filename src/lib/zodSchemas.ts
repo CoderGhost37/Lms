@@ -67,5 +67,22 @@ export const chapterSchema = z.object({
   courseId: z.string().uuid('Course ID must be a valid UUID'),
 })
 
+export const lessonSchema = z.object({
+  name: z
+    .string()
+    .min(3, 'Name must be atleast 3 characters long')
+    .max(100, 'Name must be less than 100 characters'),
+  description: z
+    .string()
+    .min(10, 'Description must be atleast 10 characters long')
+    .max(1000, 'Description must be less than 1000 characters')
+    .optional(),
+  thumbnailKey: z.string().optional(),
+  videoKey: z.string().optional(),
+  courseId: z.string().uuid('Course ID must be a valid UUID'),
+  chapterId: z.string().uuid('Chapter ID must be a valid UUID'),
+})
+
 export type CourseSchemaType = z.infer<typeof courseSchema>
 export type ChapterSchemaType = z.infer<typeof chapterSchema>
+export type LessonSchemaType = z.infer<typeof lessonSchema>

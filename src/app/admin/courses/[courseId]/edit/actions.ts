@@ -11,6 +11,8 @@ import {
   type CourseSchemaType,
   chapterSchema,
   courseSchema,
+  type LessonSchemaType,
+  lessonSchema,
 } from '@/lib/zodSchemas'
 
 const aj = arcjet
@@ -206,6 +208,58 @@ export async function createChapter(values: ChapterSchemaType): Promise<ApiRespo
     return {
       status: 'error',
       message: 'Failed to create chapter',
+    }
+  }
+}
+
+export async function createLesson(values: LessonSchemaType): Promise<ApiResponse> {
+  await requireAdmin()
+  try {
+    const validation = lessonSchema.safeParse(values)
+    if (!validation.success) {
+      return {
+        status: 'error',
+        message: 'Invalid lesson data',
+      } as ApiResponse
+    }
+
+    const { name, description, videoKey, thumbnailKey, courseId, chapterId } = validation.data
+
+    await prisma.$transaction(async (tx) => {
+      const maxPos = await tx.lesson.findFirst({
+        where: {
+          chapterId,
+        },
+        select: {
+          position: true,
+        },
+        orderBy: {
+          position: 'desc',
+        },
+      })
+
+      await tx.lesson.create({
+        data: {
+          title: name,
+          description,
+          thumbnailKey,
+          videoKey,
+          chapterId,
+          position: (maxPos?.position ?? 0) + 1,
+        },
+      })
+    })
+
+    revalidatePath(`/admin/courses/${courseId}/edit`)
+
+    return {
+      status: 'success',
+      message: 'Lesson created successfully',
+    } as ApiResponse
+  } catch {
+    return {
+      status: 'error',
+      message: 'Failed to create lesson',
     }
   }
 }
