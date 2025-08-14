@@ -6,7 +6,12 @@ import { requireAdmin } from '@/app/data/admin/require-admin'
 import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet'
 import { prisma } from '@/lib/db'
 import type { ApiResponse } from '@/lib/types'
-import { type CourseSchemaType, courseSchema } from '@/lib/zodSchemas'
+import {
+  type ChapterSchemaType,
+  type CourseSchemaType,
+  chapterSchema,
+  courseSchema,
+} from '@/lib/zodSchemas'
 
 const aj = arcjet
   .withRule(
@@ -153,5 +158,54 @@ export async function reorderChapters(
       status: 'error',
       message: 'Failed to reorder chapters',
     } as ApiResponse
+  }
+}
+
+export async function createChapter(values: ChapterSchemaType): Promise<ApiResponse> {
+  await requireAdmin()
+  try {
+    const validation = chapterSchema.safeParse(values)
+    if (!validation.success) {
+      return {
+        status: 'error',
+        message: 'Invalid chapter data',
+      } as ApiResponse
+    }
+
+    const { name, courseId } = validation.data
+
+    await prisma.$transaction(async (tx) => {
+      const maxPos = await tx.chapter.findFirst({
+        where: {
+          courseId,
+        },
+        select: {
+          position: true,
+        },
+        orderBy: {
+          position: 'desc',
+        },
+      })
+
+      await tx.chapter.create({
+        data: {
+          title: name,
+          courseId,
+          position: (maxPos?.position ?? 0) + 1,
+        },
+      })
+    })
+
+    revalidatePath(`/admin/courses/${courseId}/edit`)
+
+    return {
+      status: 'success',
+      message: 'Chapter created successfully',
+    } as ApiResponse
+  } catch {
+    return {
+      status: 'error',
+      message: 'Failed to create chapter',
+    }
   }
 }

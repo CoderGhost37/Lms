@@ -59,4 +59,13 @@ export const courseSchema = z.object({
     .default('DRAFT'),
 })
 
+export const chapterSchema = z.object({
+  name: z
+    .string()
+    .min(3, 'Name must be atleast 3 characters long')
+    .max(100, 'Name must be less than 100 characters'),
+  courseId: z.string().uuid('Course ID must be a valid UUID'),
+})
+
 export type CourseSchemaType = z.infer<typeof courseSchema>
+export type ChapterSchemaType = z.infer<typeof chapterSchema>

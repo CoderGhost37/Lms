@@ -28,6 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import { reorderChapters, reorderLessons } from '../actions'
+import { NewChapterModal } from './new-chapter-modal'
 
 interface CourseStructureProps {
   data: AdminCourseSingularType
@@ -251,6 +252,7 @@ export function CourseStructure({ data }: CourseStructureProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between border-b border-border">
           <CardTitle>Chapters</CardTitle>
+          <NewChapterModal courseId={data.id} />
         </CardHeader>
         <CardContent className="space-y-8">
           <SortableContext items={items} strategy={verticalListSortingStrategy}>
