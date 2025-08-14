@@ -43,6 +43,7 @@ export function NewLessonModal({ courseId, chapterId }: { courseId: string; chap
   })
 
   const handleOpenChange = (open: boolean) => {
+    if (!open) form.reset()
     setOpen(open)
   }
 
