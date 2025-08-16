@@ -29,12 +29,14 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { tryCatch } from '@/hooks/try-catch'
+import { useConfetti } from '@/hooks/use-confetti'
 import type { CourseSchemaType } from '@/lib/zodSchemas'
 import { courseCategories, courseLevels, courseSchema, courseStatus } from '@/lib/zodSchemas'
 import { createCourse } from '../actions'
 
 export function CourseCreationForm() {
   const router = useRouter()
+  const { triggerConfetti } = useConfetti()
   const [isPending, startTransition] = useTransition()
   const form = useForm<CourseSchemaType>({
     resolver: zodResolver(courseSchema) as Resolver<CourseSchemaType>,
@@ -66,6 +68,7 @@ export function CourseCreationForm() {
       }
 
       toast.success(result.message)
+      triggerConfetti()
       form.reset()
       router.push('/admin/courses')
     })
