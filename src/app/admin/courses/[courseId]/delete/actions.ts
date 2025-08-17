@@ -1,13 +1,49 @@
 'use server'
 
+import { request } from '@arcjet/next'
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/app/data/admin/require-admin'
+import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet'
 import { prisma } from '@/lib/db'
 import type { ApiResponse } from '@/lib/types'
 
+const aj = arcjet
+  .withRule(
+    detectBot({
+      mode: 'LIVE',
+      allow: [],
+    })
+  )
+  .withRule(
+    fixedWindow({
+      mode: 'LIVE',
+      window: '1m',
+      max: 5,
+    })
+  )
+
 export async function deleteCourse(courseId: string): Promise<ApiResponse> {
-  await requireAdmin()
+  const session = await requireAdmin()
   try {
+    const req = await request()
+    const decision = await aj.protect(req, {
+      fingerprint: session.user.id,
+    })
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        return {
+          status: 'error',
+          message: 'Rate limit exceeded. Please try again later.',
+        } as ApiResponse
+      } else {
+        return {
+          status: 'error',
+          message: 'You are a bot! If this is a mistake, please contact support.',
+        } as ApiResponse
+      }
+    }
+
     await prisma.course.delete({
       where: {
         id: courseId,
