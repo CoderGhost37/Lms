@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String       @id
   name          String
   email         String
   emailVerified Boolean
@@ -19,11 +19,13 @@ model User {
   sessions      Session[]
   accounts      Account[]
   courses       Course[]
+  enrollments   Enrollment[]
 
-  role       String?
-  banned     Boolean?
-  banReason  String?
-  banExpires DateTime?
+  stripeCustomerId String?   @unique
+  role             String?
+  banned           Boolean?
+  banReason        String?
+  banExpires       DateTime?
 
   @@unique([email])
   @@map("user")
@@ -93,7 +95,8 @@ model Course {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  chapters Chapter[]
+  chapters    Chapter[]
+  enrollments Enrollment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -134,6 +137,24 @@ model Lesson {
   @@map("lesson")
 }
 
+model Enrollment {
+  id     String           @id @default(uuid())
+  amount Int
+  status EnrollmentStatus @default(Pending)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+  @@map("enrollment")
+}
+
 enum CourseLevel {
   BEGINNER
   INTERMEDIATE
@@ -144,4 +165,10 @@ enum CourseStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum EnrollmentStatus {
+  Pending
+  Active
+  Cancelled
 }
