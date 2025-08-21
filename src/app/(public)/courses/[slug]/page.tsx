@@ -13,6 +13,7 @@ import { getCourse } from '@/app/data/course/get-course'
 import { checkIfCourseBought } from '@/app/data/user/user-is-enrolled'
 import { RenderDescription } from '@/components/rich-text-editor/render-description'
 import { Badge } from '@/components/ui/badge'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { env } from '@/lib/env'
@@ -228,7 +229,9 @@ export default async function CoursePage({ params }: { params: Params }) {
               </div>
 
               {isEnrolled ? (
-                <Link href="/dashboard">Watch Course</Link>
+                <Link href="/dashboard" className={buttonVariants({ className: 'w-full' })}>
+                  Watch Course
+                </Link>
               ) : (
                 <EnrollmentButton courseId={course.id} />
               )}
