@@ -91,6 +91,7 @@ model Course {
   price            Int
   duration         Int
   category         String
+  stripePriceId    String       @unique
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
