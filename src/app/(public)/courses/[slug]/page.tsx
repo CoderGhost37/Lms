@@ -8,13 +8,15 @@ import {
 } from '@tabler/icons-react'
 import { CheckIcon } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { getCourse } from '@/app/data/course/get-course'
+import { checkIfCourseBought } from '@/app/data/user/user-is-enrolled'
 import { RenderDescription } from '@/components/rich-text-editor/render-description'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { env } from '@/lib/env'
+import { EnrollmentButton } from './_components/enrollment-button'
 
 type Params = Promise<{
   slug: string
@@ -23,6 +25,7 @@ type Params = Promise<{
 export default async function CoursePage({ params }: { params: Params }) {
   const { slug } = await params
   const course = await getCourse(slug)
+  const isEnrolled = await checkIfCourseBought(course.id)
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-5">
       <div className="order-1 lg:col-span-2">
@@ -224,7 +227,12 @@ export default async function CoursePage({ params }: { params: Params }) {
                 </ul>
               </div>
 
-              <Button className="w-full">Enroll Now!</Button>
+              {isEnrolled ? (
+                <Link href="/dashboard">Watch Course</Link>
+              ) : (
+                <EnrollmentButton courseId={course.id} />
+              )}
+
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 30-day money-back guarantee
               </p>
