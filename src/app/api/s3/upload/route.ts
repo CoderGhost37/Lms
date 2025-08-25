@@ -8,7 +8,7 @@ import arcjet, { detectBot, fixedWindow } from '@/lib/arcjet'
 import { env } from '@/lib/env'
 import { S3 } from '@/lib/s3Client'
 
-export const fileUploadSchema = z.object({
+const fileUploadSchema = z.object({
   fileName: z.string().min(1, 'File name is required'),
   contentType: z.string().min(1, 'Content type is required'),
   size: z.number().min(1, 'File size must be greater than 0'),
