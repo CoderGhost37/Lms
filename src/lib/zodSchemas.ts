@@ -75,7 +75,7 @@ export const lessonSchema = z.object({
   description: z
     .string()
     .min(10, 'Description must be atleast 10 characters long')
-    .max(1000, 'Description must be less than 1000 characters')
+    .max(10000, 'Description must be less than 10000 characters')
     .optional(),
   thumbnailKey: z.string().optional(),
   videoKey: z.string().optional(),

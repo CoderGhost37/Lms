@@ -11,10 +11,11 @@ interface LessonItemProps {
     position: number
   }
   slug: string
+  isActive?: boolean
 }
 
-export function LessonItem({ lesson, slug }: LessonItemProps) {
-  const completed = true
+export function LessonItem({ lesson, slug, isActive }: LessonItemProps) {
+  const completed = false
   return (
     <Link
       href={`/dashboard/${slug}/${lesson.id}`}
@@ -23,7 +24,10 @@ export function LessonItem({ lesson, slug }: LessonItemProps) {
         className: cn(
           'w-full p-2.5 h-auto justify-start transition-all',
           completed &&
-            'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-900/50 text-green-800 dark:text-green-200'
+            'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-900/50 text-green-800 dark:text-green-200',
+          isActive &&
+            !completed &&
+            'bg-primary/10 dark:bg-primary/50 border-primary/50 hover:bg-primary/20 dark:hover:bg-primary/30 text-primary'
         ),
       })}
     >
@@ -40,10 +44,18 @@ export function LessonItem({ lesson, slug }: LessonItemProps) {
           ) : (
             <div
               className={cn(
-                'size-5 rounded-full border-2 bg-background flex justify-center items-center'
+                'size-5 rounded-full border-2 bg-background flex justify-center items-center',
+                isActive
+                  ? 'border-primary bg-primary/10 dark:bg-primary/20'
+                  : 'border-muted-foreground/60'
               )}
             >
-              <Play className={cn('size-2.5 fill-current')} />
+              <Play
+                className={cn(
+                  'size-2.5 fill-current',
+                  isActive ? 'text-primary' : 'text-muted-foreground'
+                )}
+              />
             </div>
           )}
         </div>
@@ -51,13 +63,21 @@ export function LessonItem({ lesson, slug }: LessonItemProps) {
           <p
             className={cn(
               'text-xs truncate font-medium',
-              completed && 'text-green-800 dark:text-green-200'
+              completed
+                ? 'text-green-800 dark:text-green-200'
+                : isActive
+                  ? 'text-primary font-semibold'
+                  : 'text-foreground'
             )}
           >
             {lesson.position}. {lesson.title}
           </p>
           {completed && (
             <p className="text-[10px] text-green-700 dark:text-green-300 font-medium">Completed</p>
+          )}
+
+          {isActive && !completed && (
+            <p className="text-[10px] text-primary font-medium">Currently Watching</p>
           )}
         </div>
       </div>
