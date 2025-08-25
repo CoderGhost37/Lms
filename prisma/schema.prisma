@@ -9,17 +9,18 @@ datasource db {
 }
 
 model User {
-  id            String       @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  courses       Course[]
-  enrollments   Enrollment[]
+  id             String           @id
+  name           String
+  email          String
+  emailVerified  Boolean
+  image          String?
+  createdAt      DateTime
+  updatedAt      DateTime
+  sessions       Session[]
+  accounts       Account[]
+  courses        Course[]
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
 
   stripeCustomerId String?   @unique
   role             String?
@@ -129,6 +130,8 @@ model Lesson {
   videoKey     String?
   position     Int
 
+  lessonProgress LessonProgress[]
+
   chapterId String
   chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
@@ -154,6 +157,23 @@ model Enrollment {
 
   @@unique([userId, courseId])
   @@map("enrollment")
+}
+
+model LessonProgress {
+  id        String  @id @default(uuid())
+  progress  Int     @default(0)
+  completed Boolean @default(false)
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
 }
 
 enum CourseLevel {

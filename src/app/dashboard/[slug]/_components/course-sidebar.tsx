@@ -6,6 +6,7 @@ import type { CourseSidebarDataType } from '@/app/data/course/get-course-sidebar
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Progress } from '@/components/ui/progress'
+import { useCourseProgress } from '@/hooks/use-course-progress'
 import { LessonItem } from './lesson-item'
 
 interface CourseSidebarProps {
@@ -15,6 +16,10 @@ interface CourseSidebarProps {
 export function CourseSidebar({ course }: CourseSidebarProps) {
   const pathname = usePathname()
   const currentLessonId = pathname.split('/').pop()
+
+  const { totalLessons, completedLessons, progressPercentage } = useCourseProgress({
+    courseData: course,
+  })
 
   return (
     <div className="flex flex-col h-full">
@@ -33,10 +38,12 @@ export function CourseSidebar({ course }: CourseSidebarProps) {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Progress</span>
-            <span className="font-medium">4/10 lessons</span>
+            <span className="font-medium">
+              {completedLessons}/{totalLessons} lessons
+            </span>
           </div>
-          <Progress value={55} className="h-1.5" />
-          <p className="text-xs text-muted-foreground">55% complete</p>
+          <Progress value={progressPercentage} className="h-1.5" />
+          <p className="text-xs text-muted-foreground">{progressPercentage}% complete</p>
         </div>
       </div>
 
@@ -65,6 +72,10 @@ export function CourseSidebar({ course }: CourseSidebarProps) {
                   lesson={lesson}
                   slug={course.slug}
                   isActive={currentLessonId === lesson.id}
+                  completed={
+                    lesson.lessonProgress.find((progress) => progress.lessonId === lesson.id)
+                      ?.completed ?? false
+                  }
                 />
               ))}
             </CollapsibleContent>
