@@ -1,17 +1,11 @@
 'use client'
 
 import { ArrowLeft, CheckIcon } from 'lucide-react'
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useConfetti } from '@/hooks/use-confetti'
-
-export const metadata: Metadata = {
-  title: 'Success',
-  description: 'Your payment was successful. You should now have access to the course.',
-}
 
 export default function PaymentSuccessfulPage() {
   const { triggerConfetti } = useConfetti()
