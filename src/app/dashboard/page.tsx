@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { EmptyState } from '@/components/empty-state/empty-state'
 import { PublicCourseCard } from '../(public)/courses/_components/public-course-card'
 import { getAllCourses } from '../data/course/get-all-courses'
 import { getEnrolledCourses } from '../data/user/get-enrolled-courses'
 import { CourseProgressCard } from './_components/course-progress-card'
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description: 'User dashboard for managing courses and progress',
+}
 
 export default async function DashboardPage() {
   const [courses, enrolledCourses] = await Promise.all([getAllCourses(), getEnrolledCourses()])

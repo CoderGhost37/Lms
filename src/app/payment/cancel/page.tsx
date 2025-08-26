@@ -1,7 +1,13 @@
 import { ArrowLeft, XIcon } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+
+export const metadata: Metadata = {
+  title: 'Failed',
+  description: 'Your payment was not successful.',
+}
 
 export default function PaymentCancelledPage() {
   return (

@@ -1,8 +1,14 @@
 import { ArrowLeft } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CourseCreationForm } from './_components/course-creation-form'
+
+export const metadata: Metadata = {
+  title: 'Create Course',
+  description: 'Admin page for creating a new course',
+}
 
 export default function CourseCreationPage() {
   return (

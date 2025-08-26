@@ -7,9 +7,11 @@ import {
   IconPlayerPlay,
 } from '@tabler/icons-react'
 import { CheckIcon } from 'lucide-react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getCourse } from '@/app/data/course/get-course'
+import { getCourseBySlug } from '@/app/data/course/get-course-by-slug'
 import { checkIfCourseBought } from '@/app/data/user/user-is-enrolled'
 import { RenderDescription } from '@/components/rich-text-editor/render-description'
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +24,16 @@ import { EnrollmentButton } from './_components/enrollment-button'
 type Params = Promise<{
   slug: string
 }>
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params
+  const course = await getCourseBySlug(slug)
+
+  return {
+    title: course.title,
+    description: course.smallDescription,
+  }
+}
 
 export default async function CoursePage({ params }: { params: Params }) {
   const { slug } = await params

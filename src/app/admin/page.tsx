@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { EmptyState } from '@/components/empty-state/empty-state'
@@ -8,6 +9,11 @@ import { buttonVariants } from '@/components/ui/button'
 import { getAdminEnrollmentStats } from '../data/admin/get-admin-enrollment-stats'
 import { AdminCourseCard } from './courses/_components/admin-course-card'
 import { CoursesSkeletonLayout } from './courses/_components/courses-skeleton'
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard',
+  description: 'Dashboard page for admin users',
+}
 
 export default async function AnalyticsPage() {
   const enrollmentStats = await getAdminEnrollmentStats()

@@ -1,10 +1,22 @@
+import type { Metadata } from 'next'
 import { adminGetCourse } from '@/app/data/admin/admin-get-course'
+import { getCourseById } from '@/app/data/course/get-course-by-id'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CourseStructure } from './_components/course-structure'
 import { EditCourseForm } from './_components/edit-course-form'
 
 type Params = Promise<{ courseId: string }>
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { courseId } = await params
+  const course = await getCourseById(courseId)
+
+  return {
+    title: `Edit - ${course.title}`,
+    description: course.smallDescription,
+  }
+}
 
 export default async function EditCoursePage({ params }: { params: Params }) {
   const { courseId } = await params
